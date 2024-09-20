@@ -23,7 +23,7 @@ const Profile=()=>{
    
     
     const getAllTheCarts = async()=> {
-        let result = await fetch("http://localhost:5000/carts");
+        let result = await fetch("https://final-7wfu.onrender.com/carts");
         result = await result.json();
     }
     getAllTheCarts();
@@ -32,7 +32,7 @@ const Profile=()=>{
 
     const getOwnSellingProducts = async()=> {
         let a = []; // Using setArray(Array.push(...)) doesnt work !
-        let result = await fetch("http://localhost:5000/products");
+        let result = await fetch("https://final-7wfu.onrender.com/products");
         result = await result.json();
         result = Array.from(result);
         result.forEach((product)=> {
@@ -45,7 +45,7 @@ const Profile=()=>{
 
     const gelSoldProducts = async ()=> {
         let a = [];
-        let result = await fetch("http://localhost:5000/carts");
+        let result = await fetch("https://final-7wfu.onrender.com/carts");
         result = await result.json();
         result = Array.from(result);
         result.forEach((command)=> {
@@ -73,7 +73,7 @@ const Profile=()=>{
     
 
     const getCarts = async()=> {
-        let result = await fetch(`http://localhost:5000/cart/${userId}`, {
+        let result = await fetch(`https://final-7wfu.onrender.com/cart/${userId}`, {
             headers: {
                 authorization:`bearer ${JSON.parse(localStorage.getItem('token'))}`
             }
@@ -92,7 +92,7 @@ const Profile=()=>{
         }
 
         const deleteProduct= async(id)=>{
-            let result = await fetch(`http://localhost:5000/${id}`, {
+            let result = await fetch(`https://final-7wfu.onrender.com/${id}`, {
                 method:"Delete",
                 headers: {
                     authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
