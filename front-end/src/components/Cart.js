@@ -23,7 +23,7 @@ const Cart=()=> {
     }
 
     const validatePurchase = async()=>{  
-        let result = await fetch("https://final-7wfu.onrender.com/cart", {
+        let result = await fetch("https://uuu-3fwk.onrender.com/cart", {
             method:'post',
             body:JSON.stringify({cart, userId, total}),
             headers:{
@@ -65,7 +65,7 @@ const Cart=()=> {
         let price = item.price;
         let condition = item.condition;
         let company = item.company;
-        let result = await fetch("https://final-7wfu.onrender.com/add-product",{ 
+        let result = await fetch("https://uuu-3fwk.onrender.com/add-product",{ 
             method:"post",
             body:JSON.stringify({name, price, condition, company}),
             headers: {

@@ -39,7 +39,7 @@ const AddProduct =  ()=> {
         }
         const userId = JSON.parse(localStorage.getItem('user'))._id; // localStorage.getItem('user')._id doesnt work
         console.warn(userId);
-        let result = await fetch("https://final-7wfu.onrender.com/add-product",{ // Doit être l'adresse de la route
+        let result = await fetch("https://uuu-3fwk.onrender.com/add-product",{ // Doit être l'adresse de la route
             method:"post",
             body:JSON.stringify({name, price, condition, company, userId}),
             headers: {
