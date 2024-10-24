@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import Button from '../Button';
+
 const Login = () => {
   const [email, setEmail]=useState("");
   const [password, setPassword]=useState("");
@@ -59,7 +61,7 @@ function handleFormSubmit(event) {
         value={password}
         onChange={(e)=>setPassword(e.target.value)}
       />
-      <button onClick={handleLogin} type="button" className="appButton">Connexion</button>
+      <Button function={handleLogin} text="Connexion"/>
     </form>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import Button from '../Button';
+
 const SignUp=()=>{
     const [name, setName]=useState("");
     const [email, setEmail]=useState("");
@@ -17,13 +19,16 @@ const SignUp=()=>{
 // http://localhost:5000/register
 // http://localhost:5000/register
 
+    let adresse = "http://localhost:5000/register";
+
     const navigate = useNavigate();
     useEffect(()=> {
 
-        const auth = localStorage.getItem('user');  
-        if(auth){
-            navigate('/');
-        }
+    const auth = localStorage.getItem('user');
+
+    if(auth){
+        navigate('/');
+    }
     }, [])
     
     function handleFormSubmit(event) {
@@ -31,7 +36,7 @@ const SignUp=()=>{
       }
 
     const collectData=async()=> {        
-            let result = await fetch("http://localhost:5000/register", { /*Remplacement du localhost pour connecter le BA au FE  */
+            let result = await fetch(adresse, { /*Remplacement du localhost pour connecter le BA au FE  */
             method:'post',
             body:JSON.stringify({name, email, password, confirmPassword}),
             headers:{
@@ -44,10 +49,10 @@ const SignUp=()=>{
                 return false;
             }
             if(result.auth){
-            localStorage.setItem("user",JSON.stringify(result.result));
+            localStorage.setItem("user",JSON.stringify(result.result)); // Faire en sorte d'avoir user
             localStorage.setItem('token', JSON.stringify(result.auth));
-            localStorage.setItem('cart', JSON.stringify([])); // Ajout panier
-            navigate("/");
+            localStorage.setItem('cart', JSON.stringify([])); 
+            navigate("/"); 
             }
 
             // Double name and/or email
@@ -61,8 +66,6 @@ const SignUp=()=>{
             }
             if(result.email){
                 setInvalidEmail(true);
-                console.log(result.email);
-                console.log("youpi");
             }
     };
        
@@ -92,7 +95,7 @@ const SignUp=()=>{
             value = {confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)}
             />
             {error && !confirmPassword && <span className='invalid-input-register'>Confirmez votre mot de passe !</span>}
-            <button onClick={collectData} className="appButton" type="button">S'inscrire</button>
+            <Button function={collectData} text="Inscription"/>
         </form>
     )
 }
