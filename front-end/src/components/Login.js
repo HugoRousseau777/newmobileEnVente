@@ -41,7 +41,8 @@ function handleFormSubmit(event) {
     }
   };
   return (
-    <form onSubmit={handleFormSubmit} className="login">
+    <div className='blueBackG'>
+      <form onSubmit={handleFormSubmit} className="login">
       <h1>Se connecter</h1>
       <label for="email"></label>
       <input
@@ -61,8 +62,10 @@ function handleFormSubmit(event) {
         value={password}
         onChange={(e)=>setPassword(e.target.value)}
       />
-      <Button function={handleLogin} text="Connexion"/>
     </form>
+    <Button function={handleLogin} text="Connexion"/>
+    </div>
+
   );
 };
 

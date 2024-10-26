@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
+
+import Button from '../Button';
 const AddProduct =  ()=> {
 
     const [name, setName] = React.useState(''); // No need to import !
     const [price, setPrice] = React.useState('');
     const [condition, setCondition] = React.useState('');
-    const [company, setCompany] = React.useState('');
     const [error, setError] = React.useState(false);
 
     function handleFormSubmit(event) {
@@ -33,7 +34,7 @@ const AddProduct =  ()=> {
     }
 
     const addProduct = async ()=>{
-        if(!name || !price || !company || !condition){
+        if(!name || !price || !condition){
             setError(true);
             return false;
         }
@@ -41,7 +42,7 @@ const AddProduct =  ()=> {
         console.warn(userId);
         let result = await fetch("http://localhost:5000/add-product",{ // Doit être l'adresse de la route
             method:"post",
-            body:JSON.stringify({name, price, condition, company, userId}),
+            body:JSON.stringify({name, price, condition, userId}),
             headers: {
                 "Content-Type":"application/json",
                 authorization:`bearer ${JSON.parse(localStorage.getItem('token'))}`
@@ -86,18 +87,8 @@ const AddProduct =  ()=> {
                 </div>
             </div>
             {error && !condition && <div className='invalid-input'>Entrez l'état de votre téléphone !</div>}
-            <label for="company"></label>
-            <select id="company" type="text" defaultValue={company} onChange={(e)=>{setCompany(e.target.value)}}>
-                <option defaultValue="">Sélectionnez l'origine du téléphone</option>
-                <option defaultValue="Orange">Orange</option>
-                <option defaultValue="Apple">Apple</option>
-                <option defaultValue="Samsung">Samsung</option>
-                <option defaultValue="Nokia">Nokia</option>
-                <option defaultValue="Novotel">Novotel</option>
-                <option defaultValue="Nokia">Nokia</option>
-            </select>
-            {error  && !company && <div className='invalid-input'>Choisissez l'origine du téléphone</div>}
-            <button id="addProduct" onClick={addProduct}>Mettre en vente</button>
+           
+            <Button function={addProduct} text="Mettre en vente"/>
         </form>
     )
 }

@@ -12,6 +12,7 @@ const jwtKey = 'e-com';
 
 const uri = "mongodb+srv://hugo:megaman00@cluster0.7qqwlqk.mongodb.net/e-comm?retryWrites=true&w=majority"; // Attention à mettre le nom de la db apprès .net/
 const mongoose = require('mongoose');
+const Products = require("./db/Products");
 
 async function connect() {
   try {
@@ -122,7 +123,7 @@ app.post("/login",  async (req, res) => {
       }
   });
 
-app.post("/add-product", verifyToken, async (req, res)=>{
+app.post("/add-product", async (req, res)=>{
     let product = new Product(req.body);
     let result = await product.save();
     res.send(result);
@@ -136,37 +137,8 @@ app.get("/products", async (req,res)=>{
     res.send({result:"No products !"})
   }
 })
-// Ajout tri par prix !!! Fonctionne, plus qu'à pouvoir l'adapter au curseur
-app.get("/productsbypriceMore/:key", async (req, res)=> {
-  const products = await Product.find({price: {$gt:req.params.key}}).sort({"price": -1, "_id": 1}); // trie le prix par ordre décroissant (l'id est là pour avoir le même ordre à chaque fois qu'on a des prix identiques) 
-  res.send(products);
-  /* Empêchait la MAJ quand tous les produits de la page allaient être supprimés par la requête !!! 
-  if(products.length>0){
-    
-  } else {
-    res.send("Ohoh");
-  }*/
-})
-app.get("/productsbypriceLess/:key", async (req, res)=> {
-  const products = await Product.find({price: {$lt:req.params.key}}).sort({"price": 1, "_id": 1});
-  res.send(products);
-})
 
-
-app.delete("/product/:id", verifyToken, async (req, res)=> {
-  let result = await Product.deleteOne({_id: req.params.id});
-  res.send(result);
-})
-
-app.put("/product/:id", verifyToken, async(req, res) => {
-  let result = await Product.updateOne(
-    {_id: req.params.id},
-    {$set: req.body}
-  )
-  res.send(result);
-})
-
-app.get("/product/:id", verifyToken, async (req, res)=> {
+app.get("/product/:id", async (req, res)=> {
   let result = await Product.findOne({_id:req.params.id})
   if(result){
     res.send(result);
@@ -176,21 +148,21 @@ app.get("/product/:id", verifyToken, async (req, res)=> {
   }
 })
 
-app.get("/search/:key", verifyToken, async (req, res)=> {
-  let result = await Product.find({
-    "$or": [
-      {
-        name: {$regex: req.params.key}
-      },
-      {
-        category: {$regex: req.params.key}
-      }
-    ]
-  });
+app.delete("/product/:id", async (req, res)=> {
+  let result = await Product.deleteOne({_id: req.params.id});
   res.send(result);
-});
+})
 
+app.put("/product/:id", async(req, res) => {
+  let result = await Product.updateOne(
+    {_id: req.params.id},
+    {$set: req.body}
+  )
+  res.send(result);
+})
+/*
 function verifyToken(req,res,next){
+  
   console.warn(req.headers['authorization']); // warn works in VS terminal
   let token = req.headers['authorization'];
   if(token){
@@ -206,6 +178,7 @@ function verifyToken(req,res,next){
   } else {
     res.status(403).send('Please provide a token');
   }
+    
 }
-
+*/
 app.listen(5000);

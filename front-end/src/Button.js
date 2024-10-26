@@ -2,7 +2,7 @@ import React from 'react';
 
 function Button(props) {
     return (
-        <button onClick={props.function} className="appButton" type="button">{props.text}</button>
+        <button onClick={props.function} id={props.id} className="appButton" type="button">{props.text}</button>
     );
 }
 

@@ -70,7 +70,8 @@ const SignUp=()=>{
     };
        
     return (
-        <form onSubmit={handleFormSubmit} className="register">
+        <div className='blueBackG'>
+            <form onSubmit={handleFormSubmit} className="register">
             <h1>Inscription</h1>
             <label htmlFor="nom"></label>
             <input id="nom" className="inputBox" type="text" placeholder="Entrez un nom"
@@ -95,8 +96,10 @@ const SignUp=()=>{
             value = {confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)}
             />
             {error && !confirmPassword && <span className='invalid-input-register'>Confirmez votre mot de passe !</span>}
-            <Button function={collectData} text="Inscription"/>
         </form>
+        <Button function={collectData} text="Inscription"/>
+
+        </div>   
     )
 }
 

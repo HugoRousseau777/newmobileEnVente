@@ -33,8 +33,13 @@ h1 {
   padding: 5px;
 }
 
-.register, .login {
-  width: 100%;
+.blueBackG {
+  width: 30%;
+  background-color: #4592eb;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 25px;
+  padding-bottom: 2em;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -42,25 +47,27 @@ h1 {
 }
 
 .register, .login {
-  width: 40%;
-  background-color: #4592eb;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 25px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.3em;
 }
 
+
 .register h1, .login h1{
-  margin-bottom: 4%;
+  margin-bottom: 8%;
   color: white;
 }
 
 .register .inputBox, .login .inputBox {
   text-align: center;
   font-size: 18px;
-  padding: 7px;
+  padding: 6px;
   border: 2px solid white;
-  width: 300px;
-  margin-bottom: 1em;
+  width: 60%;
+  margin-bottom: 1.6em;
   background-color: #e9f0fe;
 }
 
@@ -75,21 +82,14 @@ h1 {
   margin-bottom: 0.4em;
 }
 
-.register button, .login button, #addProduct, .cart .command, .article button {
+.appButton {
+  padding: 2% 3%;
   font-size: 18px;
   font-weight: 800;
   background-color: #ff4500;
   color: white;
   border-radius: 15px;
   cursor: pointer;
-}
-
-.appButton {
-  background-color: #4592eb;
-  width: 150px;
-  padding: 10px;
-  margin: 20px;
-  border: solid 1px;
 }
 
 .footer {
@@ -118,10 +118,6 @@ h1 {
   margin-top: 0;
   font-size: 28px;
   margin-bottom: 0.8em;
-}
-
-.product-list button {
-  cursor: pointer;
 }
 
 .product-list p {

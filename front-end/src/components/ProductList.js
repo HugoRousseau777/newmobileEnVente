@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import Product from '../Product';
+
 // Use state to render difference in style
 // !!! Using a select would be better for number of prod per page, why doesn't it work ? !!!
 
@@ -24,7 +26,6 @@ const ProductList=()=>{
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [productsEnd, setProductsEnd] = useState(10);
 
-    const conditionButtons = Array.from(document.getElementsByClassName("conditionButton"));
     let cart = JSON.parse(localStorage.getItem("cart"));
     let user = JSON.parse(localStorage.getItem("user"));
 
@@ -34,38 +35,26 @@ const ProductList=()=>{
         getProducts();
     }, [])
 
+
+// If no clever state management system to prevent using the whole array allproducts every time, fusion hooks/functions bellow
     useEffect(()=> {
-        getQuality();
+        getPerQuality();
         }, [bad, good, correct, perfect]
     );
 
     useEffect(()=> {
-        getPrices();
+        getPerPrices();
         }, [priceMin, priceMax]
     );
     useEffect(()=> {
-        getSearch();
+        getPerSearch();
         }, [search]
     );
 
-    // a) A changer, directement via la BDD plutôt que par aléatoire 
 
-    const imgs = ['aa.jpeg','dza.jpeg','téléchargement.jpeg'];
-    let allRandom = []; // Array des n° d'images aléatoire ; Lgth= au nombre d'article
-    for (let i =0; i<products.length; i++){
-    let rand = Math.floor(Math.random()*imgs.length);
-    allRandom.push(rand);
-    }
-
-    // a)
-
-    function aaa (e) { // Nom à changer
-        const ident = e.target.id; // To get id of clicked element
+    function ButtonQChgStyle (e) { // Nom à changer
+        const ident = e.target.id; 
         const button = document.getElementById(ident);
-        conditionButtons.forEach(button=> {
-            if(button.id !== ident) // That way the toggle works correctly
-            button.classList.remove("selected");
-        })
         button.classList.toggle("selected");
     }
     
@@ -88,35 +77,9 @@ const ProductList=()=>{
         setAllProducts(interM);    
     }
 
-    const deleteProduct= async(id)=>{
-        console.warn(id);
-        let result = await fetch(`http://localhost:5000/product/${id}`, {
-            method:"Delete",
-            headers: {
-                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
-            }
-        });
-        result = await result.json();
-        if(result){
-            getProducts();
-        } else {
-            alert("Nothing happened !")
-        }        
-    }
 
-    const addToCart= async(id)=> {
-        let result = await fetch(`http://localhost:5000/product/${id}`, {
-            headers: {
-                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
-            }
-        });
-        result = await result.json();
-        cart.push(result);
-        localStorage.setItem("cart",JSON.stringify(cart));
-        alert("Product added to cart !");
-    }
 
-const getQuality = async() => {
+const getPerQuality = async() => {
 
     let inter = allProducts;
     let interFinal = [];
@@ -138,7 +101,7 @@ const getQuality = async() => {
     setProducts(interFinal);
 }
 
-    const getPrices = async() => {
+    const getPerPrices = async() => {
         
         let inter = allProducts;
         let interFinal = [];
@@ -157,7 +120,7 @@ const getQuality = async() => {
         setProducts(interFinal);
     }
         
-    const getSearch = async() => {
+    const getPerSearch = async() => {
 
         let inter = allProducts;
         let interFinal = [];
@@ -224,7 +187,12 @@ const searchCheck = (array) => {
     return array;
 }
 
-    const getMoreThan = async(event) => {
+    const searchHandle = async(event)=>{
+        let key = event.target.value;
+        setSearch(key);   
+    } 
+
+    const getMinPrice = async(event) => {
         if(Number(event.target.value) > 0) {
             let key = Number(event.target.value);
             setPriceMin(key);
@@ -232,7 +200,7 @@ const searchCheck = (array) => {
             setPriceMin('');
         }
     }
-    const getLessThan = async(event) => {
+    const getMaxPrice = async(event) => {
         if(Number(event.target.value) > 0) {
             let key = Number(event.target.value);
             setPriceMax(key);
@@ -240,12 +208,8 @@ const searchCheck = (array) => {
             setPriceMax('');
         }
     }
-    const searchHandle = async(event)=>{
-        let key = event.target.value;
-        setSearch(key);   
-    } 
 
-    const getQualityState = async(e) => {
+    const getQuality = async(e) => {
         const ident = e.target.id;
         switch (ident) {
             case 'perfect':
@@ -268,10 +232,10 @@ const searchCheck = (array) => {
             <h1>Liste des produits</h1>
             <input type="text" className="search-product-box" placeholder="Recherchez votre produit !" onChange={(event)=> { searchHandle(event)}}/>
             <input type="number" className="search-product-box" onChange={(event)=> {
-                getMoreThan(event);
+                getMinPrice(event);
                 }}  placeholder="Minimum : ... €"/>
             <input type="number" className="search-product-box" onChange={(event)=> {
-                getLessThan(event);
+                getMaxPrice(event);
                 }}  placeholder="Maximum ... €"/>
 
 {priceMax < priceMin && typeof priceMax === 'number'&& <span className='invalid-input-register'>Le prix maximal est inférieur au minimum, seulement le minimum est pris en compte !</span>}
@@ -280,40 +244,25 @@ const searchCheck = (array) => {
             <p>Choisissez une condition acceptable pour votre achat, vous aurez cet état et mieux :</p>
             <div className="condition containerCondBut">
             <button className="conditionButton" id="perfect" onClick={(e)=> {
-                    getQualityState(e);
-                    aaa(e);
+                    getQuality(e);
+                    ButtonQChgStyle(e);
                     }}>Parfait</button> 
                 <button className="conditionButton" id="good" onClick={(e)=>{
-                     getQualityState(e);
-                     aaa(e)
+                     getQuality(e);
+                     ButtonQChgStyle(e)
                     }}>Bon</button> 
                 <button className="conditionButton" id="correct" onClick={(e)=>{
-                    getQualityState(e);
-                    aaa(e);}}>Correct</button> 
+                    getQuality(e);
+                    ButtonQChgStyle(e);}}>Correct</button> 
                 <button className="conditionButton" id="bad" onClick={(e)=>{
-                    getQualityState(e);
-                    aaa(e);}}>Mauvais</button> 
+                    getQuality(e);
+                    ButtonQChgStyle(e);}}>Mauvais</button> 
             </div>
             <div className="products">
             {
                products.length>0 ? (products.slice(productsStart, productsEnd + 1)).map((item, index)=> 
                <>
-               <div className="product">
-                   <div className="product-img">
-                       <img className="img-aleat" src={`/images/${imgs[allRandom[index]]}`}/>
-                   </div>
-                    <ul key={item._id} >
-                    <li>{item.name}</li>
-                    <li>{item.price} €</li>
-                    <li>{item.condition}</li>
-                    <li>{item.company}</li>
-                    </ul>
-                    <div className="product-buttons">
-                        <button className="super-button" onClick={()=>{addToCart(item._id);
-                                                                        deleteProduct(item._id);
-                        }}>Acheter</button>
-                    </div>
-                </div>
+                <Product item={item} index={index}></Product>
                 </>
                 ) : <h1>Pas de résultat ...</h1>
             }
