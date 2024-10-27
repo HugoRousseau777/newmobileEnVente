@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 
 function Product(props) {
 
-    let cart = JSON.parse(localStorage.getItem("cart"));
-    
-    const [prodDom, setProdDom]= useState(""); 
+    const [prodId, setProdId] = useState('');
 
-
-   
-
-    const getTheId= async(e) => {        
-        let product = document.getElementById(e.target.parentNode.parentNode.id);
-        deleteProduct(e.target.parentNode.parentNode.id);
-        addToCart(e.target.parentNode.parentNode.id);
+useEffect(()=> {
+    if(prodId.length > 0) { // JS a un typage nul
+        addToCart(prodId);
+        deleteProduct(prodId);
+        let product = document.getElementById(prodId);
         product.remove();
-        //setProdDom(e.target.parentNode.parentNode.id);
-        //console.log(e.target.parentNode.parentNode.id);
     }
 
-
-
+}, [prodId])
+  
+    const getTheId= async(e) => {      
+        const productId = e.target.parentNode.parentNode.id;
+        setProdId(productId);
+       
+    }
 
     const deleteProduct= async(id)=>{
         let result = await fetch(`http://localhost:5000/product/${id}`, {
@@ -29,17 +28,13 @@ function Product(props) {
                 authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
             }
         });
-        //result = await result.json();
+
         result = await result.json();
 
-        
-        if(result){
-          //  getProducts(); // Retirer le produit de la liste serait mieux
 
-            
-        } else {
-            alert("Nothing happened !")
-        }   
+        if(!result){
+            alert("Produit absent de la BDD");  
+        } 
     }
 
     const addToCart= async(id)=> {
@@ -49,12 +44,14 @@ function Product(props) {
             }
         });
         result = await result.json();
-        cart.push(result);
-        localStorage.setItem("cart",JSON.stringify(cart));
+        const cartou = [
+            ...JSON.parse(localStorage.getItem("cart")),
+            result
+        ];
+        localStorage.setItem('cart', JSON.stringify(cartou));
         alert("Product added to cart !");
+        
     }
-
-
 
 
     return (

@@ -142,7 +142,9 @@ h1 {
   margin-bottom: 0.6em;
 }
 
-.product-list .containerCondBut {
+/*Quality Style*/
+
+.containerCondBut {
   width: 45%;
   margin-left: auto;
   margin-right: auto;
@@ -150,14 +152,38 @@ h1 {
   justify-content: space-around;
 }
 
+.addCondition {
+  background-color: white;
+  border-radius: 25px;
+  border: 1px solid black;
+  margin-top: 0.6em;
+  padding: 0.6em 0em;
+  display: flex;
+  align-items: center;
+  font-size: 1.6em;
+  justify-content: space-around;
+}
+
 .conditionButton {
   background-color: #4592eb;
-  color: white;
+  color: black;
   font-weight: 600;
   border: 2px solid green;
   border-radius: 15px;
   cursor: pointer;
-  
+}
+
+.condition button {
+  border-radius: 50%;
+  width: 75px;
+  aspect-ratio: 1/1;
+}
+
+
+
+.condition p {
+  margin: 0;
+  margin-bottom: 0.6em;
 }
 
 .conditionButton:hover {
@@ -257,7 +283,7 @@ h1 {
   margin-bottom: 0.5em;
 }
 
-.add-product select, .add-product input, .add-product .condition {
+.add-product select, .add-product input, .addCondition {
   background-color: white;
 }
 
@@ -279,44 +305,11 @@ h1 {
   color: black;
 }
 
-.add-product .condition{
-  border-radius: 25px;
-  border: 1px solid black;
-  margin-top: 0.6em;
-  margin-left: auto;
-  margin-right: auto;
-  padding-bottom: 0.4em;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 1.6em;
-  width: 60%;
-  justify-content: space-between;
-}
 
-.condition p {
-  margin: 0;
-  margin-bottom: 0.6em;
-}
 
-.add-product .containerCondBut {
-  width: 87%;
-  display: flex;
-  justify-content: space-between;
-}
 
-.condition button {
-  color: black;
-  border-radius: 50%;
-  width: 75px;
-  aspect-ratio: 1/1;
-}
 
-#addProduct {
-  margin-top: 2em;
-  cursor: pointer;
-}
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

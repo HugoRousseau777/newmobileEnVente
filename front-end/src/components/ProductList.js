@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import Product from '../Product';
+import Quality from '../Quality';
 
 // Use state to render difference in style
 // !!! Using a select would be better for number of prod per page, why doesn't it work ? !!!
@@ -22,11 +23,10 @@ const ProductList=()=>{
     const [correct, setCorrect] = useState(false);
     const [bad, setBad] = useState(false);
 
-    const [productsStart, setProductsStart] = useState(0);
-    const [productsPerPage, setProductsPerPage] = useState(10);
-    const [productsEnd, setProductsEnd] = useState(10);
+   // const [productsStart, setProductsStart] = useState(0);
+   // const [productsPerPage, setProductsPerPage] = useState(10);
+   // const [productsEnd, setProductsEnd] = useState(10);
 
-    let cart = JSON.parse(localStorage.getItem("cart"));
     let user = JSON.parse(localStorage.getItem("user"));
 
     const path = 'front-end/public/images/';
@@ -229,6 +229,7 @@ const searchCheck = (array) => {
 
     return (
         <div className="product-list">
+
             <h1>Liste des produits</h1>
             <input type="text" className="search-product-box" placeholder="Recherchez votre produit !" onChange={(event)=> { searchHandle(event)}}/>
             <input type="number" className="search-product-box" onChange={(event)=> {
@@ -237,37 +238,18 @@ const searchCheck = (array) => {
             <input type="number" className="search-product-box" onChange={(event)=> {
                 getMaxPrice(event);
                 }}  placeholder="Maximum ... €"/>
-
 {priceMax < priceMin && typeof priceMax === 'number'&& <span className='invalid-input-register'>Le prix maximal est inférieur au minimum, seulement le minimum est pris en compte !</span>}
-                <br>
-                </br>
-            <p>Choisissez une condition acceptable pour votre achat, vous aurez cet état et mieux :</p>
-            <div className="condition containerCondBut">
-            <button className="conditionButton" id="perfect" onClick={(e)=> {
-                    getQuality(e);
-                    ButtonQChgStyle(e);
-                    }}>Parfait</button> 
-                <button className="conditionButton" id="good" onClick={(e)=>{
-                     getQuality(e);
-                     ButtonQChgStyle(e)
-                    }}>Bon</button> 
-                <button className="conditionButton" id="correct" onClick={(e)=>{
-                    getQuality(e);
-                    ButtonQChgStyle(e);}}>Correct</button> 
-                <button className="conditionButton" id="bad" onClick={(e)=>{
-                    getQuality(e);
-                    ButtonQChgStyle(e);}}>Mauvais</button> 
-            </div>
+  
+            <Quality text = "Choisissez la ou les conditions acceptables pour votre achat :"getQuality={getQuality} ButtonQChgStyle={ButtonQChgStyle}></Quality>
             <div className="products">
             {
-               products.length>0 ? (products.slice(productsStart, productsEnd + 1)).map((item, index)=> 
+               products.length>0 ? products.map((item, index)=> 
                <>
                 <Product item={item} index={index}></Product>
                 </>
                 ) : <h1>Pas de résultat ...</h1>
             }
             </div>
-
         </div>
     )
 }
