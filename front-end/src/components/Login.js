@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import Button from '../Button';
+
 const Login = () => {
   const [email, setEmail]=useState("");
   const [password, setPassword]=useState("");
@@ -39,7 +41,8 @@ function handleFormSubmit(event) {
     }
   };
   return (
-    <form onSubmit={handleFormSubmit} className="login">
+    <div className='blueBackG'>
+      <form onSubmit={handleFormSubmit} className="login">
       <h1>Se connecter</h1>
       <label for="email"></label>
       <input
@@ -59,8 +62,10 @@ function handleFormSubmit(event) {
         value={password}
         onChange={(e)=>setPassword(e.target.value)}
       />
-      <button onClick={handleLogin} type="button" className="appButton">Connexion</button>
     </form>
+    <Button function={handleLogin} text="Connexion"/>
+    </div>
+
   );
 };
 

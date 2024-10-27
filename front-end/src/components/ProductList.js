@@ -1,55 +1,63 @@
 import React, { useEffect, useState } from 'react';
 
+import Product from '../Product';
+import Quality from '../Quality';
+
 // Use state to render difference in style
 // !!! Using a select would be better for number of prod per page, why doesn't it work ? !!!
 
+// Faire fonction séparée pour le style
+
 const ProductList=()=>{
 
-    const [productsStart, setProductsStart] = useState(0);
-    const [productsPerPage, setProductsPerPage] = useState(10);
-    const [productsEnd, setProductsEnd] = useState(10);
     const [products, setProducts]= useState([]); 
     const [allProducts, setAllProducts] = useState([]);
-    const [priceMore, setPriceMore] = useState(0);
-    const [priceLess, setPriceLess] = useState(0);
-    const [priceInterval, setPriceInterval] = useState([]);
+
+    const [priceMin, setPriceMin] = useState('');
+    const [priceMax, setPriceMax] = useState(''); // '' Pour éviter l'avertissement max < min
+
     const [search, setSearch] = useState("");
-    const [searchResult, setSearchResult] = useState([]);
-    const [searchQuality, setSearchQuality] = useState([]);
+
     const [perfect, setPerfect] = useState(false);
     const [good, setGood] = useState(false);
-    const [ok, setOk] = useState(false);
+    const [correct, setCorrect] = useState(false);
     const [bad, setBad] = useState(false);
 
-    const conditionButtons = Array.from(document.getElementsByClassName("conditionButton"));
-    let cart = JSON.parse(localStorage.getItem("cart"));
+   // const [productsStart, setProductsStart] = useState(0);
+   // const [productsPerPage, setProductsPerPage] = useState(10);
+   // const [productsEnd, setProductsEnd] = useState(10);
+
     let user = JSON.parse(localStorage.getItem("user"));
 
     const path = 'front-end/public/images/';
-    const imgs = ['aa.jpeg','dza.jpeg','téléchargement.jpeg'];
-    let allRandom = []; // Array des n° d'images aléatoire ; Lgth= au nombre d'article
-    for (let i =0; i<products.length; i++){
-    let rand = Math.floor(Math.random()*imgs.length);
-    allRandom.push(rand);
-    }
 
-    function aaa (e) {
-        const ident = e.target.id; // To get id of clicked element
-        const button = document.getElementById(ident);
-        conditionButtons.forEach(button=> {
-            if(button.id !== ident) // That way the toggle works correctly
-            button.classList.remove("selected");
-        })
-        button.classList.toggle("selected");
-    }
-    
     useEffect(()=> {
         getProducts();
     }, [])
-    useEffect(()=> {
-        console.log(products.length);
-    }, [products])
 
+
+// If no clever state management system to prevent using the whole array allproducts every time, fusion hooks/functions bellow
+    useEffect(()=> {
+        getPerQuality();
+        }, [bad, good, correct, perfect]
+    );
+
+    useEffect(()=> {
+        getPerPrices();
+        }, [priceMin, priceMax]
+    );
+    useEffect(()=> {
+        getPerSearch();
+        }, [search]
+    );
+
+
+    function ButtonQChgStyle (e) { // Nom à changer
+        const ident = e.target.id; 
+        const button = document.getElementById(ident);
+        button.classList.toggle("selected");
+    }
+    
     const getProducts = async () => {
         let result = await fetch('https://uuu-3fwk.onrender.com/products', {
             headers:{
@@ -69,161 +77,73 @@ const ProductList=()=>{
         setAllProducts(interM);    
     }
 
-const getQuality = async(e) => {
-    const regex = new RegExp(`${search}`);
-    let inter = allProducts; 
 
-    const ident = e.target.id;
-    switch (ident) {
-    case 'perfect':
-        if(!perfect){
-            inter = inter.filter((i)=> i.condition === "Perfect");
-        } else {
-            inter = allProducts;
-        }
-        setPerfect(!perfect);
-        setGood(false);
-        setOk(false);
-        setBad(false);
-        break;
-    case 'good':
-        if(!good){
-            inter = inter.filter((i)=> i.condition == "Perfect").concat(inter.filter((i)=> i.condition == "Good"));
-        } else {
-            inter = allProducts;
-        }
-        setPerfect(false);
-        setGood(!good);
-        setOk(false);
-        setBad(false);
-        break;
-    case 'correct':
-        if(!ok){
-            inter = inter.filter((i)=> i.condition !== "Bad");
-        } else {
-            inter = allProducts;
-        } 
-        setPerfect(false);
-        setGood(false);
-        setOk(!ok);
-        setBad(false);
-        break;
-    default:
-        inter = allProducts;
-        setPerfect(false);
-        setGood(false);
-        setOk(false);
-        setBad(!bad);
-    }
-    setSearchQuality(inter);
-    if (priceMore) {
-        inter = inter.filter((i)=> i.price > priceMore)
-    }
-    if (priceLess) {
-        inter = inter.filter((i)=> i.price < priceLess)
-    }
-    if(search){
-        inter = inter.filter((i)=> regex.test(i.name));
+
+const getPerQuality = async() => {
+
+    let inter = allProducts;
+    let interFinal = [];
+
+    if(priceMin > 0 || priceMax > 0) {
+        inter = priceCheck(inter);
     } 
-    setProducts(inter);
+
+    if(search.length > 0) {
+        inter = searchCheck(inter);
+    } 
+
+    if(perfect || good || correct || bad) {
+        interFinal = qualityCheck(interFinal, inter);
+    } else {
+        interFinal = inter;
+    }
+
+    setProducts(interFinal);
 }
 
-    const getMoreThan = async(event) => {
-        let key = event.target.value;
-        setPriceMore(key);
-    }
-
-    const getLessThan = async(event) => {
-        let key = event.target.value;
-        setPriceLess(key);
-    }
-
-    useEffect(()=> {
-        const regex = new RegExp(`${search}`); 
-        let inter = allProducts; 
-        if(perfect || good || ok) {
-            inter = searchQuality;
-        }
-
-        if(priceLess){
-            inter = inter.filter((i)=> i.price < priceLess);
-            if(priceMore){
-                inter = inter.filter((i)=> i.price > priceMore);
-            } 
-        } else if (priceMore) {
-            inter = inter.filter((i)=> i.price > priceMore);
-        } 
-        setProducts(inter);
-        setPriceInterval(inter); // PB Because quality is in it too
-
-        if(search){
-            inter = inter.filter((i)=> regex.test(i.name))
-            setProducts(inter);
-        }
- 
-    }, [priceLess, priceMore])
-
-    const searchHandle = async(event)=>{
-        let key = event.target.value;
-        setSearch(key);   
-    } 
-
-    useEffect(()=> {
+    const getPerPrices = async() => {
+        
         let inter = allProducts;
-        // !!! We can put if/else to determine the original array to work with !!!
-        if(perfect || good || ok) {
-            inter = searchQuality;
-            if (priceMore) {
-                inter = inter.filter((i)=> i.price > priceMore)
-            }
-            if (priceLess) {
-                inter = inter.filter((i)=> i.price < priceLess)
-            }
-        } else if(priceInterval.length > 0) {
-            inter = priceInterval;
+        let interFinal = [];
+
+        if(perfect || good || correct || bad) {
+            interFinal = qualityCheck(interFinal, inter);
         } else {
-            inter = allProducts;
+            interFinal = inter;
+        }
+
+        if(search.length > 0){
+           interFinal = searchCheck(interFinal);
+        } 
+        
+        interFinal = priceCheck(interFinal);
+        setProducts(interFinal);
+    }
+        
+    const getPerSearch = async() => {
+
+        let inter = allProducts;
+        let interFinal = [];
+
+        if(priceMax > 0||priceMin >0) {
+            inter = priceCheck(inter);
         }
         
-        if(search) {
-            const regex = new RegExp(`${search}`);
-            let searchResult = inter.filter((i)=> regex.test(i.name));
-            setProducts(searchResult);
+        if(perfect || good || correct || bad) {
+            interFinal = qualityCheck(interFinal, inter);
         } else {
-            setProducts(inter);
-
+            interFinal = inter;
         }
-        setSearchResult(searchResult);
-    }, [search])
-   
-    const deleteProduct= async(id)=>{
-        console.warn(id);
-        let result = await fetch(`https://uuu-3fwk.onrender.com/product/${id}`, {
-            method:"Delete",
-            headers: {
-                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
-            }
-        });
-        result = await result.json();
-        if(result){
-            getProducts();
-        } else {
-            alert("Nothing happened !")
-        }        
+
+        if(search){
+            interFinal = searchCheck(interFinal);
+        } 
+
+        setProducts(interFinal);
     }
 
-    const addToCart= async(id)=> {
-        let result = await fetch(`https://uuu-3fwk.onrender.com/product/${id}`, {
-            headers: {
-                authorization: `bearer ${JSON.parse(localStorage.getItem('token'))}`
-            }
-        });
-        result = await result.json();
-        cart.push(result);
-        localStorage.setItem("cart",JSON.stringify(cart));
-        alert("Product added to cart !");
-    }
 
+/*
     const handlePaginationLess = async()=> {
             setProductsStart(productsStart - productsPerPage);
             setProductsEnd(productsEnd - productsPerPage);
@@ -232,76 +152,103 @@ const getQuality = async(e) => {
             setProductsStart(productsStart + productsPerPage);
             setProductsEnd(productsEnd + productsPerPage);
     }
-    
+    */
+
+    const qualityCheck = (interFinal, inter) => { // L'async n'était pas nécessaire
+        if (perfect) {
+            interFinal = interFinal.concat(inter.filter((i)=> { return i.condition === "Perfect"}))
+        }
+        if (good) {
+            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "Good"}))
+        }
+        if (correct) {
+            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "Correct"}))
+        }
+        if (bad) {
+            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "Bad"}))
+        }
+        return interFinal;
+}
+
+const priceCheck = (array) => {
+    if(priceMax >0 && priceMin >0 && priceMax > priceMin) {
+        array = array.filter((i)=> i.price >= priceMin && i.price <= priceMax)
+    } else if (priceMin > 0 ) {
+        array = array.filter((i)=> i.price >= priceMin)
+    } else if (priceMax > 0){ 
+        array = array.filter((i)=> i.price <= priceMax)
+    }
+    return array;
+}
+
+const searchCheck = (array) => {
+    const regex = new RegExp(`${search}`);
+    array = array.filter((i)=> regex.test((i.name).toLowerCase()));
+    return array;
+}
+
+    const searchHandle = async(event)=>{
+        let key = event.target.value;
+        setSearch(key);   
+    } 
+
+    const getMinPrice = async(event) => {
+        if(Number(event.target.value) > 0) {
+            let key = Number(event.target.value);
+            setPriceMin(key);
+        } else {
+            setPriceMin('');
+        }
+    }
+    const getMaxPrice = async(event) => {
+        if(Number(event.target.value) > 0) {
+            let key = Number(event.target.value);
+            setPriceMax(key);
+        } else {
+            setPriceMax('');
+        }
+    }
+
+    const getQuality = async(e) => {
+        const ident = e.target.id;
+        switch (ident) {
+            case 'perfect':
+                setPerfect(previous => !previous);
+                break;
+            case 'good':
+                setGood(previous => !previous);
+                break;
+            case 'correct':
+                setCorrect(previous => !previous);
+                break;
+            case 'bad':
+                setBad(previous => !previous);
+                break;
+        }
+    }
+
     return (
         <div className="product-list">
+
             <h1>Liste des produits</h1>
             <input type="text" className="search-product-box" placeholder="Recherchez votre produit !" onChange={(event)=> { searchHandle(event)}}/>
             <input type="number" className="search-product-box" onChange={(event)=> {
-                getMoreThan(event);
-                }}  placeholder="Plus de ... €"/>
+                getMinPrice(event);
+                }}  placeholder="Minimum : ... €"/>
             <input type="number" className="search-product-box" onChange={(event)=> {
-                getLessThan(event);
-                }}  placeholder="Moins de ... €"/>
-            <p>Choisissez une condition acceptable pour votre achat, vous aurez cet état et mieux :</p>
-            <div className="condition containerCondBut">
-            <button className="conditionButton" id="perfect" onClick={(e)=> {
-                    getQuality(e);
-                    aaa(e);
-                    }}>Parfait</button> 
-                <button className="conditionButton" id="good" onClick={(e)=>{
-                     getQuality(e);
-                     aaa(e)
-                    }}>Bon</button> 
-                <button className="conditionButton" id="correct" onClick={(e)=>{
-                    getQuality(e);
-                    aaa(e);}}>Correct</button> 
-                <button className="conditionButton" id="bad" onClick={(e)=>{
-                    getQuality(e);
-                    aaa(e);}}>Mauvais</button> 
-            </div>
+                getMaxPrice(event);
+                }}  placeholder="Maximum ... €"/>
+{priceMax < priceMin && typeof priceMax === 'number'&& <span className='invalid-input-register'>Le prix maximal est inférieur au minimum, seulement le minimum est pris en compte !</span>}
+  
+            <Quality text = "Choisissez la ou les conditions acceptables pour votre achat :"getQuality={getQuality} ButtonQChgStyle={ButtonQChgStyle}></Quality>
             <div className="products">
             {
-               products.length>0 ? (products.slice(productsStart, productsEnd + 1)).map((item, index)=> 
+               products.length>0 ? products.map((item, index)=> 
                <>
-               <div className="product">
-                   <div className="product-img">
-                       <img className="img-aleat" src={`/images/${imgs[allRandom[index]]}`}/>
-                   </div>
-                    <ul key={item._id} >
-                    <li>{item.name}</li>
-                    <li>{item.price} €</li>
-                    <li>{item.condition}</li>
-                    <li>{item.company}</li>
-                    </ul>
-                    <div className="product-buttons">
-                        <button className="super-button" onClick={()=>{addToCart(item._id);
-                                                                        deleteProduct(item._id);
-                        }}>Acheter</button>
-                    </div>
-                </div>
+                <Product item={item} index={index}></Product>
                 </>
                 ) : <h1>Pas de résultat ...</h1>
             }
-            </div>
-            <div>
-                <button disabled={productsStart == 0} onClick={handlePaginationLess}>Previous</button>
-                <button disabled={products.length + productsPerPage< productsEnd + productsPerPage} onClick={handlePaginationPlus}>Next</button>
-                <button onClick={()=> {
-                    setProductsStart(0);
-                    setProductsEnd(5);
-                    setProductsPerPage(5)
-                }}>5 per page</button>
-                <button onClick={()=> {
-                    setProductsStart(0);
-                    setProductsEnd(10);
-                    setProductsPerPage(10)
-                }}>10 per page</button>
-                <button onClick={()=> {
-                    setProductsStart(0);
-                    setProductsEnd(15);
-                    setProductsPerPage(15)
-                }}>15 per page</button>
             </div>
         </div>
     )

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import Button from '../Button';
+
 const SignUp=()=>{
     const [name, setName]=useState("");
     const [email, setEmail]=useState("");
@@ -20,10 +22,11 @@ const SignUp=()=>{
     const navigate = useNavigate();
     useEffect(()=> {
 
-        const auth = localStorage.getItem('user');  
-        if(auth){
-            navigate('/');
-        }
+    const auth = localStorage.getItem('user');
+
+    if(auth){
+        navigate('/');
+    }
     }, [])
     
     function handleFormSubmit(event) {
@@ -44,10 +47,10 @@ const SignUp=()=>{
                 return false;
             }
             if(result.auth){
-            localStorage.setItem("user",JSON.stringify(result.result));
+            localStorage.setItem("user",JSON.stringify(result.result)); // Faire en sorte d'avoir user
             localStorage.setItem('token', JSON.stringify(result.auth));
-            localStorage.setItem('cart', JSON.stringify([])); // Ajout panier
-            navigate("/");
+            localStorage.setItem('cart', JSON.stringify([])); 
+            navigate("/"); 
             }
 
             // Double name and/or email
@@ -61,13 +64,12 @@ const SignUp=()=>{
             }
             if(result.email){
                 setInvalidEmail(true);
-                console.log(result.email);
-                console.log("youpi");
             }
     };
        
     return (
-        <form onSubmit={handleFormSubmit} className="register">
+        <div className='blueBackG'>
+            <form onSubmit={handleFormSubmit} className="register">
             <h1>Inscription</h1>
             <label htmlFor="nom"></label>
             <input id="nom" className="inputBox" type="text" placeholder="Entrez un nom"
@@ -92,8 +94,10 @@ const SignUp=()=>{
             value = {confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)}
             />
             {error && !confirmPassword && <span className='invalid-input-register'>Confirmez votre mot de passe !</span>}
-            <button onClick={collectData} className="appButton" type="button">S'inscrire</button>
         </form>
+        <Button function={collectData} text="Inscription"/>
+
+        </div>   
     )
 }
 

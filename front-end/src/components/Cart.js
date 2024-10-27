@@ -41,7 +41,6 @@ const Cart=()=> {
         setProducts([]);
         for(let i=0; i<cart[0].length;i++){ // ??? cart[] ???
            setProducts(products.push(cart[0][i].price)) ;
-            //setTotal(total + cart[0][i].price);
         }
         if(products.length > 0){
             totalounet = products.reduce((accumulator, currentValue) => accumulator + currentValue, totalounet);
@@ -53,27 +52,29 @@ const Cart=()=> {
     }
        
     const deleteFromCart = (indexOfArticle)=> {
-        setTotal(total - cart[indexOfArticle].price) // Il suffisait de faire ça pour le prix total au lieu de Rappeler tout le total
+        setTotal(total - cart[indexOfArticle].price);
         cart.splice(indexOfArticle, 1);
         localStorage.setItem("cart",JSON.stringify(cart));
         getCart(); // Permet de retirer de la page sans avoir à recharger 
     };
 
     const addProductToListAfterDelete = async (item)=>{
-        const userId = JSON.parse(localStorage.getItem('user'))._id; 
+        let userId = item.userId; 
         let name = item.name;
         let price = item.price;
         let condition = item.condition;
-        let company = item.company;
+        let img = item.img;
+    
         let result = await fetch("https://uuu-3fwk.onrender.com/add-product",{ 
             method:"post",
-            body:JSON.stringify({name, price, condition, company}),
+            body:JSON.stringify({name, price, condition, userId, img}),
             headers: {
                 "Content-Type":"application/json",
                 authorization:`bearer ${JSON.parse(localStorage.getItem('token'))}`
             }
         });
         result = await result.json();
+        console.log("coucou");
     }
 
     return(<div>
@@ -82,17 +83,18 @@ const Cart=()=> {
             <div className="articles">
             {
                 cart.map((item, index)=> 
-                    <ul className="article"key={index}>
+                
+                <ul className="article"key={index}> 
                     <li className="name">{item.name}</li>
                     <li>{item.price} €</li>
                     <li>{item.condition}</li>
                     <li>{item.company}</li>
                     <li>
                         <button onClick={(e)=>{
-                                                addProductToListAfterDelete(item);
-                                                deleteFromCart(index);
-                                                }}>Supprimer</button>
-                        </li>
+                            addProductToListAfterDelete(item);
+                            deleteFromCart(index);
+                        }}>Supprimer</button>
+                    </li>
                 </ul>
                 )
             }

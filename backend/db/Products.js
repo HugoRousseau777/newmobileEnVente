@@ -5,7 +5,8 @@ const productSchema = new mongoose.Schema({
     price: Number,
     condition: String, // CG condition
     userId: String,
-    company:String
+    company:String,
+    img: String
 }, {
     timestamps:true
 });
