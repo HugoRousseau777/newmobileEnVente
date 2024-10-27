@@ -84,7 +84,7 @@ const getPerQuality = async() => {
     let inter = allProducts;
     let interFinal = [];
 
-    if(priceMin > 0 || priceMax > 0) {
+    if(typeof priceMin == Number && priceMin > 0 ||typeof priceMax && priceMax > 0) {
         inter = priceCheck(inter);
     } 
 
@@ -97,6 +97,10 @@ const getPerQuality = async() => {
     } else {
         interFinal = inter;
     }
+
+    console.log(correct);
+    
+    console.log(interFinal);
 
     setProducts(interFinal);
 }
@@ -156,16 +160,16 @@ const getPerQuality = async() => {
 
     const qualityCheck = (interFinal, inter) => { // L'async n'était pas nécessaire
         if (perfect) {
-            interFinal = interFinal.concat(inter.filter((i)=> { return i.condition === "Perfect"}))
+            interFinal = interFinal.concat(inter.filter((i)=> { return i.condition === "perfect"}))
         }
         if (good) {
-            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "Good"}))
+            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "good"}))
         }
         if (correct) {
-            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "Correct"}))
+            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "correct"}))
         }
         if (bad) {
-            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "Bad"}))
+            interFinal = interFinal.concat(inter.filter((i)=> {return i.condition === "bad"}))
         }
         return interFinal;
 }
