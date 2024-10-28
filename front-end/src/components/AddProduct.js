@@ -63,7 +63,7 @@ const AddProduct =  ()=> {
             img = samsungImgs[random];
         }
 
-        let result = await fetch("http://localhost:5000/add-product",{ 
+        let result = await fetch("https://uuu-3fwk.onrender.com/add-product",{ 
             method:"post",
             body:JSON.stringify({name, price, condition, userId, img}),
             headers: {
