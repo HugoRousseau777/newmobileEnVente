@@ -7,13 +7,11 @@ const Cart=()=> {
     const [products, setProducts] = useState([]);
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user._id;
-    //const [total, setTotal]= useState("");
 
-    useEffect(()=> { /*Permet d'activer la function à chaque clic sur le boutton*/ 
+    useEffect(()=> { 
         getCart();
-        
     }, [])
-    
+
     useEffect(()=> { 
         getTotal();
     }, [])
@@ -39,16 +37,14 @@ const Cart=()=> {
     const getTotal = ()=> {
         let totalounet = 0;
         setProducts([]);
-        for(let i=0; i<cart[0].length;i++){ // ??? cart[] ???
+        for(let i=0; i<cart[0].length;i++){ 
            setProducts(products.push(cart[0][i].price)) ;
         }
         if(products.length > 0){
             totalounet = products.reduce((accumulator, currentValue) => accumulator + currentValue, totalounet);
         }
-        //Ça et en-dessous : Solution pour avoir le total du panier => MAJ lors de la suppression ?
        setTotal(totalounet);
        setProducts(products.length=0); // Sinon ça compte le panier en double
-       totalounet = 0;
     }
        
     const deleteFromCart = (indexOfArticle)=> {
@@ -74,7 +70,6 @@ const Cart=()=> {
             }
         });
         result = await result.json();
-        console.log("coucou");
     }
 
     return(<div>

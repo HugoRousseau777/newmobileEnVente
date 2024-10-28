@@ -30,14 +30,13 @@ const AddProduct =  ()=> {
     }, [])
 
     function ButtonQChgStyle (e) {
-        const ident = e.target.id; // To get id of clicked element
+        const ident = e.target.id; 
         const button = document.getElementById(ident);
         conditionButtons.forEach(button=> {
-            if(button.id !== ident) // That way the toggle works correctly
+            if(button.id !== ident) 
             button.classList.remove("selected");
         })
         button.classList.toggle("selected");
-        setCondition(ident); // À séparer du style
     }
 
     const getQuality = async(e) => {
@@ -50,7 +49,7 @@ const AddProduct =  ()=> {
             setError(true);
             return false;
         }
-        const userId = JSON.parse(localStorage.getItem('user'))._id; // localStorage.getItem('user')._id doesnt work
+        const userId = JSON.parse(localStorage.getItem('user'))._id; 
         let img = "";
 
 
@@ -64,7 +63,7 @@ const AddProduct =  ()=> {
             img = samsungImgs[random];
         }
 
-        let result = await fetch("http://localhost:5000/add-product",{ // Doit être l'adresse de la route
+        let result = await fetch("http://localhost:5000/add-product",{ 
             method:"post",
             body:JSON.stringify({name, price, condition, userId, img}),
             headers: {
@@ -76,8 +75,6 @@ const AddProduct =  ()=> {
         alert("Product added !");
     }
  
-    // size in select allows to show number of items to show
-    // <button onClick={()=>setCondition("a")} When using set... directly in onClick, dont forget ()=>set...
     return (
         <form onSubmit={handleFormSubmit} className="add-product">
             <h1>Mettre en vente un téléphone</h1>
@@ -87,8 +84,21 @@ const AddProduct =  ()=> {
                 <option defaultValue="iphone 1">iphone 1</option>
                 <option defaultValue="iphone 2">iphone 2</option>
                 <option defaultValue="iphone 3">iphone 3</option>
+                <option defaultValue="iphone 3">iphone 4</option>
+                <option defaultValue="iphone 3">iphone 5</option>
+                <option defaultValue="iphone 3">iphone 6</option>
+                <option defaultValue="iphone 3">iphone 7</option>
+                <option defaultValue="iphone 3">iphone 8</option>
+                <option defaultValue="iphone 3">iphone 9</option>
+                <option defaultValue="iphone 3">iphone 10</option>
                 <option defaultValue="samsung 1">samsung 1</option>
                 <option defaultValue="samsung 2">samsung 2</option>
+                <option defaultValue="samsung 2">samsung 3</option>
+                <option defaultValue="samsung 2">samsung galaxy</option>
+                <option defaultValue="samsung 2">samsung S+</option>
+                <option defaultValue="samsung 2">samsung 4</option>
+                <option defaultValue="samsung 2">samsung 5</option>
+                <option defaultValue="samsung 2">samsung 6</option>
             </select>
             {error && !name && <div className='invalid-input'>Entrez un nom !</div>}
             <label for="price"></label>

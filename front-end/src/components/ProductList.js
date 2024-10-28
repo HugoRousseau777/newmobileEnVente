@@ -3,10 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Product from '../Product';
 import Quality from '../Quality';
 
-// Use state to render difference in style
 // !!! Using a select would be better for number of prod per page, why doesn't it work ? !!!
-
-// Faire fonction séparée pour le style
 
 const ProductList=()=>{
 
@@ -35,24 +32,13 @@ const ProductList=()=>{
         getProducts();
     }, [])
 
-
-// If no clever state management system to prevent using the whole array allproducts every time, fusion hooks/functions bellow
+// Find a clever state management 
     useEffect(()=> {
-        getPerQuality();
-        }, [bad, good, correct, perfect]
+        getResearch();
+        }, [bad, good, correct, perfect, priceMin, priceMax, search]
     );
 
-    useEffect(()=> {
-        getPerPrices();
-        }, [priceMin, priceMax]
-    );
-    useEffect(()=> {
-        getPerSearch();
-        }, [search]
-    );
-
-
-    function ButtonQChgStyle (e) { // Nom à changer
+    function ButtonQChgStyle (e) {
         const ident = e.target.id; 
         const button = document.getElementById(ident);
         button.classList.toggle("selected");
@@ -61,14 +47,13 @@ const ProductList=()=>{
     const getProducts = async () => {
         let result = await fetch('https://uuu-3fwk.onrender.com/products', {
             headers:{
-                authorization:`bearer ${JSON.parse(localStorage.getItem('token'))}` // Only Change  
-                //Viewable in Network -> products in Name column far down-left -> 
+                authorization:`bearer ${JSON.parse(localStorage.getItem('token'))}` 
             }
         });
         result = await result.json();
   // Pour faire en sorte que l'utilisateur ne puisse pas voir ses propres produits
         let interM = [];
-        for(let i=0; i<result.length;i++){
+        for(let i=0; i<result.length;i++){ // Remplacer par filter
             if(result[i].userId !== user._id){
                 interM.push(result[i]);
             }
@@ -77,14 +62,12 @@ const ProductList=()=>{
         setAllProducts(interM);    
     }
 
-
-
-const getPerQuality = async() => {
+const getResearch = async() => {
 
     let inter = allProducts;
     let interFinal = [];
 
-    if(typeof priceMin == Number && priceMin > 0 ||typeof priceMax && priceMax > 0) {
+    if(typeof priceMin == "number" && priceMin > 0 ||typeof priceMax == "number" && priceMax > 0) {
         inter = priceCheck(inter);
     } 
 
@@ -93,59 +76,16 @@ const getPerQuality = async() => {
     } 
 
     if(perfect || good || correct || bad) {
+        if(search.length <= 0 && priceMin == "" && priceMax == "") {
+
+        }
         interFinal = qualityCheck(interFinal, inter);
     } else {
         interFinal = inter;
     }
 
-    console.log(correct);
-    
-    console.log(interFinal);
-
     setProducts(interFinal);
 }
-
-    const getPerPrices = async() => {
-        
-        let inter = allProducts;
-        let interFinal = [];
-
-        if(perfect || good || correct || bad) {
-            interFinal = qualityCheck(interFinal, inter);
-        } else {
-            interFinal = inter;
-        }
-
-        if(search.length > 0){
-           interFinal = searchCheck(interFinal);
-        } 
-        
-        interFinal = priceCheck(interFinal);
-        setProducts(interFinal);
-    }
-        
-    const getPerSearch = async() => {
-
-        let inter = allProducts;
-        let interFinal = [];
-
-        if(priceMax > 0||priceMin >0) {
-            inter = priceCheck(inter);
-        }
-        
-        if(perfect || good || correct || bad) {
-            interFinal = qualityCheck(interFinal, inter);
-        } else {
-            interFinal = inter;
-        }
-
-        if(search){
-            interFinal = searchCheck(interFinal);
-        } 
-
-        setProducts(interFinal);
-    }
-
 
 /*
     const handlePaginationLess = async()=> {

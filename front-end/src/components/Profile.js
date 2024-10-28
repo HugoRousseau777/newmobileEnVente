@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-/*Modif: Page Profil */
 const Profile=()=>{
     const auth = localStorage.getItem("user");
     const dateInscription = (JSON.parse(auth).createdAt).slice(0,10);
@@ -20,55 +19,38 @@ const Profile=()=>{
         getOwnSellingProducts();
         gelSoldProducts();
     }, [])
-   
-    
-    const getAllTheCarts = async()=> {
-        let result = await fetch("https://uuu-3fwk.onrender.com/carts");
-        result = await result.json();
-    }
-    getAllTheCarts();
 
+    useEffect(()=> {
+        getTotalSold();
+    }, [soldProducts])
+   
     //Ajout pour pouvoir supprimer/modifier ses propres produits mis en vente
 
     const getOwnSellingProducts = async()=> {
-        let a = []; // Using setArray(Array.push(...)) doesnt work !
         let result = await fetch("https://uuu-3fwk.onrender.com/products");
-        result = await result.json();
-        result = Array.from(result);
-        result.forEach((product)=> {
-            if(userId === product.userId){
-                a.push(product);
-            }
-        })
-        setSellingProducts(a);
+        result = await result.json();  
+        result = result.filter((i)=> i.userId == userId);
+        setSellingProducts(result);
     }
 
     const gelSoldProducts = async ()=> {
-        let a = [];
+        let productsSold = [];
         let result = await fetch("https://uuu-3fwk.onrender.com/carts");
         result = await result.json();
-        result = Array.from(result);
+
         result.forEach((command)=> {
-            for(let i=0; i<command.cart.length; i++){
-                if(userId === command.cart[i].userId){
-                    a.push(command.cart[i]);
-                }
-            }
+            productsSold = productsSold.concat(command.cart.filter((i)=> i.userId == userId))
         })
-        for(let i=0; i<a.length;i++){
-            setSoldProducts(soldProducts.push(a[i]));
-        }
-        //setSoldProducts(a);
-        setSoldProducts(soldProducts);
-        getTotalSold();
+
+        setSoldProducts(productsSold);
     }
 
     const getTotalSold = ()=> {
-        let totalounenou = 0;
+        let total = 0;
         for(let i=0; i<soldProducts.length; i++){
-            totalounenou += soldProducts[i].price;
+            total += soldProducts[i].price;
         }
-        setTotalSold(totalounenou);
+        setTotalSold(total);
     }
     
 
@@ -79,16 +61,15 @@ const Profile=()=>{
             }
             });
         result = await result.json();
-        setCarts(carts.concat(result));
         setCarts(result);
-        let interArticles = 0;
-        let interTotal = 0;
+        let articles = 0;
+        let total = 0;
         for(let i=0; i<result.length;i++){
-            interArticles += result[i].cart.length;
-            interTotal += result[i].total;
+            articles += result[i].cart.length;
+            total += result[i].total;
         }
-        setTotalArticles(interArticles);
-        setTotal(interTotal);
+        setTotalArticles(articles);
+        setTotal(total);
         }
 
         const deleteProduct= async(id)=>{

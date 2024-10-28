@@ -3,14 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateProduct =  ()=>{
 
-    const [name, setName] = React.useState(''); // No need to import !
+    const [name, setName] = React.useState(''); 
     const [price, setPrice] = React.useState('');
     const [condition, setCondition] = React.useState('');
     const [company, setCompany] = React.useState('');
-
-
-    // http://localhost:5000/register
-// https://uuu-3fwk.onrender.com
 
     const params = useParams();
     const navigate = useNavigate();
