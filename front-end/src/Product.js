@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
+import Button from './Button';
 
 function Product(props) {
 
     const [prodId, setProdId] = useState('');
+    const [loading, setLoading] = useState(false);
+
 
 useEffect(()=> {
+    setLoading(true);
     if(prodId.length > 0) { // JS a un typage nul
         addToCart(prodId);
         deleteProduct(prodId);
         let product = document.getElementById(prodId);
         product.remove();
     }
+    setLoading(false);
 
 }, [prodId])
   
@@ -66,9 +71,7 @@ useEffect(()=> {
  <li>{props.item.company}</li>
  </ul>
  <div className="product-buttons">
-<button className="super-button" onClick={(e)=>{
-    getTheId(e);
-}}>Acheter</button>
+ <Button loading={loading} function={getTheId} text="Acheter"/>
 </div>
 </div>
     );

@@ -6,6 +6,7 @@ import Button from '../Button';
 const Login = () => {
   const [email, setEmail]=useState("");
   const [password, setPassword]=useState("");
+  const [loading, setLoading]= useState(false);
   const navigate = useNavigate();
 
   useEffect(()=> { // Si le local storage est déjà occupé, l'utilisateur est renvoyé sur l'onglet products
@@ -21,6 +22,7 @@ function handleFormSubmit(event) {
 
   const handleLogin = async () => {
   // Test des champs : console.warn(email,password);
+  setLoading(true);
   let result = await fetch("https://uuu-3fwk.onrender.com/login", {
         method:'post',
         body: JSON.stringify({email,password}),
@@ -37,6 +39,7 @@ function handleFormSubmit(event) {
       localStorage.setItem('cart', JSON.stringify([])); // Ajout panier + register
       navigate("/");
     } else {
+      setLoading(false);
       alert("Please enter correct connect details");
     }
   };
@@ -44,7 +47,7 @@ function handleFormSubmit(event) {
     <div className='blueBackG'>
       <form onSubmit={handleFormSubmit} className="login">
       <h1>Se connecter</h1>
-      <label for="email"></label>
+      <label htmlFor="email"></label>
       <input
         id="email"
         type="text"
@@ -53,7 +56,7 @@ function handleFormSubmit(event) {
         value={email}
         onChange={(e)=>setEmail(e.target.value)}
       />
-      <label for="mdp"></label>
+      <label htmlFor="mdp"></label>
       <input
         id="mdp"
         type="text"
@@ -63,7 +66,7 @@ function handleFormSubmit(event) {
         onChange={(e)=>setPassword(e.target.value)}
       />
     </form>
-    <Button function={handleLogin} text="Connexion"/>
+    <Button loading={loading} function={handleLogin} text="Connexion"/>
     </div>
 
   );

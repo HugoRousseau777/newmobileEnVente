@@ -1,15 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Quality from '../Quality';
 
 import Button from '../Button';
+
 const AddProduct =  ()=> {
 
-    const [name, setName] = React.useState(''); // No need to import !
-    const [price, setPrice] = React.useState('');
-    const [condition, setCondition] = React.useState('');
-    const [error, setError] = React.useState(false);
+    const [name, setName] = useState(''); // No need to import !
+    const [price, setPrice] = useState('');
+    const [condition, setCondition] = useState('');
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const iphoneImgs = ["13Minuit.webp", "13Pro.webp", "aa.jpeg", "dza.jpeg", "I3Bad.webp", "I155G.webp", "iphone3Gs.webp"
+
+    const iphoneImgs = ["13Minuit.webp", "13Pro.webp", "aa.jpeg", "dza.jpeg", "I3Bad.webp", "I155G.webp", "Iphone3Gs.webp"
         , "iphone13.webp", "iphone15.webp", "iphoneOne.webp", "iphonerigolo.webp", "shopping.webp", "téléchargement.jpeg"];
     const samsungImgs = ["gala.webp", "galass.webp", "galaxy.webp", "galaxyA.webp", "jc.webp", "S21_5G.webp", "samsung.webp",
         "samsungGalaxyRigolo.webp", "SGS22Bad.webp", "SGS22Ultra.webp"
@@ -45,8 +48,11 @@ const AddProduct =  ()=> {
     }
 
     const addProduct = async ()=>{
+        setLoading(true);
+
         if(!name || !price || !condition){
             setError(true);
+            setLoading(false);
             return false;
         }
         const userId = JSON.parse(localStorage.getItem('user'))._id; 
@@ -73,6 +79,8 @@ const AddProduct =  ()=> {
         });
         result = await result.json();
         alert("Product added !");
+        setLoading(false);
+
     }
  
     return (
@@ -108,7 +116,7 @@ const AddProduct =  ()=> {
                 <Quality container="addCondition" text="État de votre téléphone :" getQuality={getQuality} ButtonQChgStyle={ButtonQChgStyle}></Quality>
             {error && !condition && <div className='invalid-input'>Entrez l'état de votre téléphone !</div>}
            
-            <Button function={addProduct} text="Mettre en vente"/>
+            <Button loading={loading} function={addProduct} text="Mettre en vente"/>
         </form>
     )
 }

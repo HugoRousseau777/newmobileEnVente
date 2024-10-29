@@ -9,11 +9,13 @@ const SignUp=()=>{
     const [invalidEmail, setInvalidEmail]=useState(false);
     const [password, setPassword]=useState("");
     const [confirmPassword, setConfirmPassword]=useState("");
-    const [error, setError] = React.useState(false);
-    const [doubleName, setDoubleName] = React.useState(false);
-    const [doubleEmail, setDoubleEmail] = React.useState(false);
-    const [emailProposition, setEmailProposition] = React.useState('');
-    const [nameProposition, setNameProposition] = React.useState('');
+    const [error, setError] = useState(false);
+    const [doubleName, setDoubleName] = useState(false);
+    const [doubleEmail, setDoubleEmail] = useState(false);
+    const [emailProposition, setEmailProposition] = useState('');
+    const [nameProposition, setNameProposition] = useState('');
+
+    const [loading, setLoading] = useState(false);
 
 
 // https://uuu-3fwk.onrender.com/register
@@ -33,7 +35,8 @@ const SignUp=()=>{
         event.preventDefault();
       }
 
-    const collectData=async()=> {        
+    const collectData=async()=> {      
+            setLoading(true);  
             let result = await fetch("https://uuu-3fwk.onrender.com/register", { /*Remplacement du localhost pour connecter le BA au FE  */
             method:'post',
             body:JSON.stringify({name, email, password, confirmPassword}),
@@ -44,6 +47,7 @@ const SignUp=()=>{
             result= await result.json();  
             if(!name || !email || !password || !confirmPassword){
                 setError(true);
+                setLoading(false);
                 return false;
             }
             if(result.auth){
@@ -52,8 +56,8 @@ const SignUp=()=>{
             localStorage.setItem('cart', JSON.stringify([])); 
             navigate("/"); 
             }
+            
 
-            // Double name and/or email
             if(result.newName){
                 setDoubleName(true);
                 setNameProposition(result.newName); 
@@ -95,7 +99,7 @@ const SignUp=()=>{
             />
             {error && !confirmPassword && <span className='invalid-input-register'>Confirmez votre mot de passe !</span>}
         </form>
-        <Button function={collectData} text="Inscription"/>
+        <Button loading={loading} function={collectData} text="Inscription"/>
 
         </div>   
     )

@@ -104,7 +104,7 @@ const Profile=()=>{
                         <p>{item.company}</p>
                         <div className="optionsSelling">
                         <button className="super-button" onClick={()=>{deleteProduct(item._id)}}>Retirer</button>
-                       <Link to={"/update/" + item._id}><a className="super-button">Modifier</a></Link>
+                       <Link to={"/update/" + item._id}><button className="super-button">Modifier</button></Link>
                        </div>
                     </div>
                 )

@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
   
+import Button from '../Button';
+
 const Cart=()=> {
     
     const [cart, setCart]= useState([JSON.parse(localStorage.getItem("cart"))]);
     const [total, setTotal]= useState(0);
     const [products, setProducts] = useState([]);
+
+    const [loading, setLoading] = useState(false);
+
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user._id;
 
@@ -21,6 +26,7 @@ const Cart=()=> {
     }
 
     const validatePurchase = async()=>{  
+        setLoading(true);
         let result = await fetch("https://uuu-3fwk.onrender.com/cart", {
             method:'post',
             body:JSON.stringify({cart, userId, total}),
@@ -32,6 +38,7 @@ const Cart=()=> {
         setCart([]);
         localStorage.setItem("cart", JSON.stringify([]));
         setTotal(0);
+        setLoading(false);
     }
 
     const getTotal = ()=> {
@@ -94,7 +101,7 @@ const Cart=()=> {
                 )
             }
             <p className="totalCart">Total : {total} €</p>
-            <button className="command" onClick={validatePurchase}>Commander</button>
+            <Button loading={loading} function={validatePurchase} text="Commander"/>
             </div>
     </div>
     </div>
